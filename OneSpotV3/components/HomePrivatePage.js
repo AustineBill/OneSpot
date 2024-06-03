@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput, ImageBackgr
 import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border, Padding } from "../GlobalStyles";
 
-const HomePublicPage = ({ style, Username }) => {
+const HomePublicPage = ({ style }) => {
   const navigation = useNavigation();
   const [searchLocation, setSearchLocation] = React.useState("");
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -12,22 +12,36 @@ const HomePublicPage = ({ style, Username }) => {
   const { username } = route.params;
 
   const images = [
-    { source: require("../assets/image-7.png"), name: "JL Parking", location: "Manila" },
-    { source: require("../assets/image-8.png"), name: "SM Sta Mesa", location: "Manila" },
-    { source: require("../assets/image-11.png"), name: "SM Manila", location: "Manila" },
-    { source: require("../assets/image-12.png"), name: "Park N Ride", location: "Taguig" },
+    { source: require("../assets/image-7.png"), name: "Jb Parking", address: "Zone 072, 1233 Jorge Bocobo St, Ermita, Manila", location: "Manila", description: "JB Parking offers a convenient and secure multi-level parking facility located in the heart of Manila, providing easy access to nearby businesses and attractions.", price: 60, hour: 3, rating: 4.2 , adds: 20},
+    { source: require("../assets/image-8.png"), name: "SM Sta Mesa", address: "San Perfecto Intersection, Manila", location: "Manila", description: "SM Sta. Mesa's multi-level parking structure offers a convenient option for parking near the mall.", price: 60, hour: 1, rating: 4.0 , adds: 0},
+    { source: require("../assets/image-11.png"), name: "SM Manila", address: "628 San Marcelino St, Manila", location: "Manila", description: "SM Manila is a bustling shopping mall located in the heart of Manila, offering a diverse range of retail stores, dining options, entertainment facilities, and services.", price: 40, hour: 3, rating: 4.4, adds: 0 },
+    { source: require("../assets/image-12.png"), name: "Park N Ride", address: "Antonio Villegas Street, corner Dr Basa St, Ermita, Manila.", location: "Manila", description: "Offers a strategic parking facility for commuters looking to park their vehicles and easily access public transportation, providing a practical solution for those traveling into the central business district of Manila.", price: 45, hour: 3, rating: 1.5, adds: 15 },
   ];
 
-  const handleImagePress = (imageSource, name) => {
-    navigation.navigate("BookPage", { selectedImage: imageSource, name: name });
-  };
 
   const filteredImages = () => {
     if (!searchLocation) {
-      return images.slice(0, 4); // Return only the first 4 images
+      return images; // Return all images if searchLocation is empty
     } else {
-      return images.filter((image) => image.location.toLowerCase().includes(searchLocation.toLowerCase())).slice(0, 4);
+      return images.filter((image) => 
+        image.location.toLowerCase().includes(searchLocation.toLowerCase()) || 
+        image.name.toLowerCase().includes(searchLocation.toLowerCase())
+      );
     }
+  };
+
+
+  const handleImagePress = (image) => {
+    navigation.navigate("BookPage", { 
+      selectedImage: image.source, 
+      name: image.name, 
+      address: image.address,
+      description: image.description, 
+      price: image.price, 
+      hour: image.hour, 
+      rating: image.rating,
+      adds: image.adds
+    });
   };
 
   const handlePress = () => {
@@ -46,8 +60,6 @@ const HomePublicPage = ({ style, Username }) => {
     }, [])
   );
 
-
-  console.log("Route params: ", route.params);
 
 
   return (
@@ -110,7 +122,7 @@ const HomePublicPage = ({ style, Username }) => {
               {filteredImages().map((image, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => handleImagePress(image.source, image.name)}
+                  onPress={() => handleImagePress(image)}
                   style={styles.imageWrapper}
                 >
                   <Image

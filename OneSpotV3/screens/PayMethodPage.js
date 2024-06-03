@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Image } from "expo-image";
-import { useNavigation,useRoute } from "@react-navigation/native";
-import { Color, FontFamily, FontSize, Border, Padding } from "../GlobalStyles";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Color } from "../GlobalStyles";
 
 const PaymentMethodPage = () => {
   const navigation = useNavigation();
-
   const route = useRoute();
-  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate} = route.params || {};
+  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration, totalPrice, time, selectedDate } = route.params || {};
 
   const handlePaymentMethodSelect = (method) => {
-    navigation.navigate('TransactionPage', { method, name, address, duration, totalPrice, selectedFloor, selectedBlock, selectedSlot, time,selectedDate});
+    navigation.navigate('TransactionPage', { selectedPaymentMethod: method, name, address, duration, totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate });
   };
-
-  useEffect(() => {
-    console.log('slots params:', route.params);
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -67,7 +61,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 50,
     textAlign: 'center',
-   
   },
   subHeader: {
     fontSize: 18,

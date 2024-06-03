@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image } from "expo-image";
-import { View, StyleSheet, Pressable, Text } from 'react-native';
+import { View, StyleSheet, Pressable, Text, Alert } from 'react-native';
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { Picker } from '@react-native-picker/picker';
 import ParkingSlot from '../components/ParkingSlots';
@@ -9,7 +9,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const ParkingScreen = ({ navigation }) => {
   const route = useRoute();
-  const { selectedModel, name, price, address } = route.params || {};
+  const { selectedBrand, name, price, address, hour, adds } = route.params || {};
   const [error, setError] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -87,7 +87,8 @@ const ParkingScreen = ({ navigation }) => {
     { id: 62, status: 'available', floor: '4th', block: 'D' },
     { id: 63, status: 'reserved', floor: '4th', block: 'D' },
     { id: 64, status: 'occupied', floor: '4th', block: 'D' }
-  ]);
+]);
+
 
   const toggleStatus = (id) => {
     setParkingSlots((prevSlots) =>
@@ -122,8 +123,8 @@ const ParkingScreen = ({ navigation }) => {
     navigation.navigate("ConfirmBooking", {
       selectedFloor,
       selectedBlock,
-      selectedModel,
-      name, price, address,
+      selectedBrand,
+      name, price, address, hour, adds, 
       selectedSlot,
       selectedDate: selectedDate ? formatDate(selectedDate) : 'N/A',
     });
@@ -227,11 +228,11 @@ const ParkingScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   CarSlots: {
-    backgroundColor: Color.colorLightgray,
     flex: 1,
     width: "100%",
     height: 800,
     overflow: "hidden",
+  
   },
   container: {
     top: 400,
@@ -291,7 +292,6 @@ const styles = StyleSheet.create({
     top: 150,
     marginLeft: 70,
     height: 50,
-   
   },
   Datetext: {
     fontSize: FontSize.size_lg,

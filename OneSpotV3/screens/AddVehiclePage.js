@@ -40,9 +40,9 @@ const AddVehiclePage = () => {
           Enter Vehicle Type
         </Text>
         <Text style={[styles.model, styles.modelTypo]}>Model</Text>
-        <Text
-          style={[styles.plateNumber, styles.colorTypo]}
-        >{`Plate number `}</Text>
+
+        <Text style={[styles.plateNumber, styles.colorTypo]}>Plate Number</Text>
+        
         <Text style={[styles.color, styles.colorTypo]}>Color</Text>
         <Pressable
           style={[
@@ -55,7 +55,7 @@ const AddVehiclePage = () => {
         </Pressable>
         <Text
           style={[styles.selectYourVehicle, styles.doneLayout]}
-        >{`Select your vehicle `}</Text>
+        > Select Your Vehicle</Text>
         <Pressable
           style={styles.arrowBack}
           onPress={() => navigation.navigate("BookPage")}
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   modelTypo: {
     textAlign: "center",
-    color: Color.colorAliceblue_100,
+    color: Color.colorWhite,
     fontFamily: FontFamily.poppinsSemiBold,
     fontWeight: "600",
     fontSize: FontSize.size_mini,
@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
     width: 292,
     fontFamily: FontFamily.manropeSemiBold,
     textAlign: "center",
-    color: Color.colorAliceblue_100,
+    backgroundColor: Color.colorWhite,
+    color: Color.colorWhite,
     fontWeight: "600",
     fontSize: FontSize.size_mini,
     position: "absolute",

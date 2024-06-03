@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput, ImageBackground, Animated } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect} from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border, Padding } from "../GlobalStyles";
 
 const HomePublicPage = (style) => {
@@ -12,20 +12,22 @@ const HomePublicPage = (style) => {
   const { username } = route.params || {};
 
   const images = [
-    { source: require("../assets/image-13.png"), name: "Madrigal Parking", address: "Madrigal Avenue in Alabang, Muntinlupa City", location: "Muntinlupa", description: "Madrigal Business Park has multiple parking zones - check signs for visitor, tenant, short-term, and handicap parking.", price: 60, hour: 1, rating:  3.1 },
-    { source: require("../assets/image-10.png"), name: "Daj Parking", address: "Hello",  location: "Manila", description: "UN Square Parking offers a central location for parking your car in Manila, Philippines. Situated on busy UN Avenue, a multi-level structure perfect for those seeking a safe and secure spot close to the action", price: 0, hour: 0, rating: 3.5 },
-    { source: require("../assets/image-81.png"), name: "UN Square", address: "Corner 1000, United Nations Ave, Ermita, Manila City", location: "Manila", description: "UN Square Parking offers a central location for parking your car in Manila, Philippines. Situated on busy UN Avenue, a multi-level structure perfect for those seeking a safe and secure spot close to the action", price: "FREE", hour: 0, rating: 3.5 },
-    { source: require("../assets/image-14.png"), name: "Bocobo Pay Parking", address: "Zone 072, 1233 Jorge Bocobo St, Ermita, Manila City", location: "Manila", description: "Bocobo Pay Parking offers a parking option on Jorge Bocobo St. in Manila, that provides a central, safe, and secure multi-level parking facility", price: 50, hour: 1, rating: 3.7 },
+    { source: require("../assets/image-13.png"), name: "Madrigal Parking", address: "Madrigal Avenue in Alabang, Muntinlupa City", location: "Muntinlupa", description: "Madrigal Business Park has multiple parking zones - check signs for visitor, tenant, short-term, and handicap parking.", price: 60, hour: 1, rating: 3.1, adds: 10 },
+    { source: require("../assets/high.jpg"), name: "High Street Parking", address: " Bonifacio High Street, Taguig", location: "Taguig", description: "Convenient place to park vehicles but too expensive during weekdays: ₱40 for the first 4 hours and ₱50 for succeeding hours.", price: 40, hour: 4, rating: 3.5, adds: 50 },
+    { source: require("../assets/image-81.png"), name: "UN Square", address: "Corner 1000, United Nations Ave, Ermita, Manila City", location: "Manila", description: "UN Square Parking offers a central location for parking your car in Manila, Philippines. Situated on busy UN Avenue, a multi-level structure perfect for those seeking a safe and secure spot close to the action", price: "FREE", hour: 0, rating: 3.5, adds: 0 },
+    { source: require("../assets/image-14.png"), name: "Bocobo Pay Parking", address: "J. Bocobo street, manila, 1004,Mmanila", location: "Manila", description: "Bocobo Pay Parking offers a parking option on Jorge Bocobo St. in Manila, that provides a central, safe, and secure multi-level parking facility", price: 50, hour: 1, rating: 3.7, adds: 0 },
   ];
 
   const filteredImages = () => {
     if (!searchLocation) {
-      return images.slice(0, 4); 
+      return images; // Return all images if searchLocation is empty
     } else {
-      return images.filter((image) => image.location.toLowerCase().includes(searchLocation.toLowerCase())).slice(0, 4);
+      return images.filter((image) => 
+        image.location.toLowerCase().includes(searchLocation.toLowerCase()) || 
+        image.name.toLowerCase().includes(searchLocation.toLowerCase())
+      );
     }
   };
-
   const handleImagePress = (image) => {
     navigation.navigate("BookPage", { 
       selectedImage: image.source, 
@@ -34,7 +36,8 @@ const HomePublicPage = (style) => {
       description: image.description, 
       price: image.price, 
       hour: image.hour, 
-      rating: image.rating 
+      rating: image.rating,
+      adds: image.adds
     });
   };
 
@@ -47,7 +50,13 @@ const HomePublicPage = (style) => {
       navigation.navigate('HomePrivatePage', { username } );
     });
   };
-  console.log("Route params: ", route.params);
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      slideAnim.setValue(0);
+    }, [])
+  );
+
 
   return (
     <View style={[styles.homepublicPage, style]}>

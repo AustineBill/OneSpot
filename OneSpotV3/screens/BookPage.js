@@ -8,7 +8,7 @@ import { Color, FontFamily, FontSize } from "../GlobalStyles";
 const BookPage = () => {
   const navigation = useNavigation(); 
   const route = useRoute();
-  const { selectedImage, name, address, description, price, hour, rating } = route.params || {};
+  const { selectedImage, name, address, description, price, hour, rating, adds } = route.params || {};
 
   return (
     <View style={[styles.bookPage, styles.frameFlexBox1]}>
@@ -63,21 +63,16 @@ const BookPage = () => {
             </Text>
           </View>
           
-          <Pressable style={styles.frameChild} onPress={() => navigation.navigate("ParkinginfoPage", { name, price, address })} >
+          <Pressable style={styles.frameChild} onPress={() => navigation.navigate("ParkinginfoPage", { name, price, address, hour, adds})} >
             <Text style={[styles.bookNow, styles.priceTypo]}>BOOK NOW</Text>
           </Pressable>
-
           
-          
-            
-          <View style={styles.priceContainer}>
-            <View style={[styles.frame5, styles.pricePosition]}>
-              <Text style={[styles.hours, styles.hoursClr]}>/ {hour} hour{hour > 1 ? 's' : ''}</Text>
-            </View>
-            <Text style={[styles.price, styles.pricePosition]}>Php {price}</Text>
+          <View style = {styles.priceContainer}>
+            <Text style={styles.hours}> Php {price} / {hour} hour{hour > 1 ? 's' : ''} </Text>
+            <Text style={styles.adds}> + {adds} if exceeds </Text>
           </View>
 
-          <View style={styles.imagesContainer}>
+          <View style={styles.imagesContainer}> 
             <Text style={[styles.images, styles.priceLayout]}>Images</Text>
             <View style={[styles.frame6, styles.frameFlexBox]}>
               <Image style={styles.imageIcon} contentFit="cover" source={require("../assets/image-23.png")} />
@@ -107,7 +102,7 @@ const styles = StyleSheet.create({
   },
   hoursClr: {
     color: Color.colorSilver,
-    textAlign: "left",
+    
   },
   containerPosition: {
     top: 0,
@@ -305,42 +300,35 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: Color.colorBlack,
   },
-
   hours: {
-    fontSize: 11,
-    lineHeight: 11,
-    fontWeight: "500",
-    fontFamily: FontFamily.robotoMedium,
-    height: 20,
-    width: 46,
-  },
-  frame5: {
-    left: 76,
-    height: 24,
-    width: 46,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  price: {
-    left: -49,
-    fontSize: FontSize.size_base,
-    lineHeight: 17,
-    width: 123,
-    textAlign: "right",
-    fontFamily: FontFamily.robotoBold,
-    fontWeight: "700",
+    fontSize: FontSize.size_lg,
     height: 26,
     color: Color.colorWhite,
+    fontSize: 17,
+    lineHeight: 30,
+    width: 150, 
+    textAlign: "center",
+    fontFamily: FontFamily.robotoBold,
+    fontWeight: "700",
+  },
+
+  adds: {
+    fontSize: FontSize.size_mid,
+    top: 50,
+    marginTop: 5,
+    height: 20,
+    color: Color.colorLightgray,
+    fontSize: 15,
+    lineHeight: 20,
   },
   priceContainer: {
-    top: 180,
-    left: 110,
-    width: 122,
-    height: 51,
-    position: "absolute",
-    overflow: "hidden",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 145,
+    width: "100%",
+    marginLeft: 110,
   },
+
   images: {
     fontSize: 17,
     lineHeight: 15,

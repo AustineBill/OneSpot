@@ -3,11 +3,28 @@ import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation, useRoute} from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import axios from 'axios'; 
 
 
 const ReceiptPage = ({ route }) => {
   const navigation = useNavigation();
-  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate} = route.params || {};
+  
+  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate, userId} = route.params || {};
+  
+  useEffect(() => {
+    // Fetch username from backend
+    axios.get('http://192.168.1.6/onespot_api/Receipt.php') 
+      .then(response => {
+        setUsername(response.data.username);
+      })
+      .catch(error => {
+        console.error('Error fetching username:', error);
+      });
+  }, []);
+ 
+
+
+  
 
   const calculateDepartureTime = (arrivalTime, duration) => {
     const [time, meridiem] = arrivalTime.split(' ');
@@ -46,11 +63,11 @@ const ReceiptPage = ({ route }) => {
 
       <Text style={styles.invoice}>INVOICE</Text>
       
-        <View style={[styles.inputDate, styles.inputLayout]}>
-          <Text style={[styles.accountName, styles.timeFlexBox]}>
-            Account Name: {name}
-          </Text>
-        </View>
+      <View style={[styles.inputDate, styles.inputLayout]}>
+        <Text style={[styles.accountName, styles.timeFlexBox]}>
+          Account Name: {setUsername}
+        </Text>
+      </View>
 
         <View style={styles.inputLayout}>
           <Text style={[styles.TotalAmount, styles.timeFlexBox]}>

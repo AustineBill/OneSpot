@@ -1,30 +1,51 @@
 
-import { Text, StyleSheet, View, Pressable } from "react-native";
+import { Text, StyleSheet, View} from "react-native";
 import { Button } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
 import { TextInput } from "react-native";
 import React, { useState } from 'react';
 
+import axios from 'axios';
+import { TouchableOpacity } from "react-native-gesture-handler";
+
 const LoginPage = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
-  const [pass, setPass] = useState("");
+  const [password, setPass] = useState("");
 
   const handleSignUp = () => {
     navigation.navigate("Signin1");
   };
 
-  const handleNext = () => {
-    if (username !== "" && pass !== "") {
-      console.log("Navigating with username: ", username); 
-      navigation.navigate("BottomTabsRoot", { screen: "Profile", params: { username }});
-      navigation.navigate("BottomTabsRoot", { screen: " ", params: { username }});
+  const handlePass = () => {
+    navigation.navigate("ForgotPassPage");
+  };
 
+  const handleNext = async () => {
+    if (username !== "" && password !== "") {
+      try {
+        const response = await axios.post('http://192.168.1.6/onespot_api/login.php', {
+          username,
+          password: password
+        });
+
+        if (response.data.success) {
+          navigation.navigate("BottomTabsRoot", { username }); 
+        } else {
+          alert(response.data.message);
+        }
+        
+      } catch (error) {
+        console.error(error);
+        alert("An error occurred. Please try again.");
+      }
     } else {
-      alert("Both username and password are required."); 
+      alert("Both username and password are required.");
     }
   };
+
+
   return (
     <View style={styles.loginPage}>
       <View style={styles.loginPageloginWrapper}> 
@@ -41,19 +62,22 @@ const LoginPage = () => {
         <TextInput
           style={styles.textCode}
           placeholder="Enter Password"
-          value={pass}
+          value={password}
           onChangeText={setPass}
+          secureTextEntry
           theme={{ colors: { background: "rgba(168, 156, 255, 0.08)" } }}
         />
         <Text style={[styles.passfield, styles.textPosition]}>
           Password
         </Text>
           
-        <Text style={styles.forgotPassword}>Forgot password?</Text>
-
+       
+        <Text style={styles.forgotPassword} onPress={handlePass} >Forgot password?</Text>
+        
         <Text style={styles.dontHaveAnContainer}> Don't have an account?
           <Text style={styles.signUp} onPress={handleSignUp} > Sign Up </Text>
         </Text>
+
           <Button
           style={styles.doneWrapper}
           mode="contained"

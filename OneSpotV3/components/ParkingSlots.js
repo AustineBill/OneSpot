@@ -17,7 +17,7 @@ const ParkingSlot = ({ status, onPress }) => {
 
   return (
     <TouchableOpacity
-      onPress={status === 'available' ? onPress : null} // Disable press if not available
+      onPress={status === 'available' ? onPress : null} 
       style={[styles.slot, { backgroundColor: getColor(status) }]}
     >
       <Text style={styles.text}>{status.toUpperCase()}</Text>

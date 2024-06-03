@@ -1,4 +1,3 @@
-
 import FrontPage from "./screens/FrontPage";
 import HomePrivatePage from "./components/HomePrivatePage";
 import LoginPage from "./screens/LoginPage";
@@ -13,6 +12,8 @@ import Startpage from "./screens/Startpage";
 import TAA from "./screens/TAA";
 import Profile from "./components/Profile";
 import ResetNumPage from "./screens/ResetNumPage";
+import ForgotPassPage from "./screens/ForgotPassPage";
+import ChangeProfile from "./screens/ChangeProfile";
 import HistoryPage from "./screens/HistoryPage";
 import ParkinginfoPage from "./screens/ParkinginfoPage";
 import AddVehiclePage from "./screens/AddVehiclePage";
@@ -33,7 +34,7 @@ import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { useRoute } from "@react-navigation/native";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Color } from "../OneSpotV3/GlobalStyles";
@@ -42,12 +43,17 @@ import { Color } from "../OneSpotV3/GlobalStyles";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const SCREEN_NAMES = {
+  PROFILE_PUBLIC: "ProfilePublic",
+  PROFILE_PRIVATE: "ProfilePrivate",
+  HOME_PUBLIC: "HomePublicPage",
+  HOME_PRIVATE: "HomePrivatePage",
+  SEARCH: "SearchPage",
+};
 
-function BottomTabsRoot({ route, navigation }) {
-  const { username } = route.params;
-
-  console.log("Received username in BottomTabsRoot: ", username); 
-
+function BottomTabsRoot() {
+  const route = useRoute();
+  const { username } = route.params; // Extracting username from route params
 
   return (
     <Tab.Navigator
@@ -56,7 +62,7 @@ function BottomTabsRoot({ route, navigation }) {
         tabBarStyle: styles.tabBarContainer,
       }}
     >
-     <Tab.Screen
+      <Tab.Screen
         name="Home"
         options={{
           tabBarIcon: ({ focused }) => <HomeActiveStateactivecom style={styles.icon} />,
@@ -65,12 +71,36 @@ function BottomTabsRoot({ route, navigation }) {
       >
         {() => (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="HomePublicPage" component={HomePublicPage} initialParams={{ username }} />
-            <Stack.Screen name="HomePrivatePage" component={HomePrivatePage} initialParams={{ username }} />
+            <Stack.Screen 
+              name={SCREEN_NAMES.HOME_PUBLIC} 
+              component={HomePublicPage} 
+              initialParams={{ username }} // Pass username as initialParams
+            />
+            <Stack.Screen 
+              name={SCREEN_NAMES.HOME_PRIVATE} 
+              component={HomePrivatePage} 
+              initialParams={{ username }} // Pass username as initialParams
+            />
           </Stack.Navigator>
         )}
       </Tab.Screen>
-
+      <Tab.Screen
+        name="Search"
+        options={{
+          tabBarIcon: ({ focused }) => <SearchStateSetsearchIcon1 style={styles.icon} />,
+          tabBarLabel: () => null,
+        }}
+      >
+        {() => (
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen 
+              name={SCREEN_NAMES.SEARCH} 
+              component={SearchPage} 
+              initialParams={{ username }} // Pass username as initialParams
+            />
+          </Stack.Navigator>
+        )}
+      </Tab.Screen>
       <Tab.Screen
         name="Profile"
         options={{
@@ -80,7 +110,11 @@ function BottomTabsRoot({ route, navigation }) {
       >
         {() => (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Profile" component={Profile} initialParams={{ username }} />
+            <Stack.Screen 
+              name={SCREEN_NAMES.PROFILE_PUBLIC} 
+              component={Profile} 
+              initialParams={{username: route.params.username  }} 
+            />
           </Stack.Navigator>
         )}
       </Tab.Screen>
@@ -130,15 +164,19 @@ const App = () => {
         <Stack.Navigator initialRouteName="Startpage" screenOptions={{ headerShown: false }}>
           {isAuthenticated ? (
             <>
-              <Stack.Screen name="BottomTabsRoot" component={BottomTabsRoot} initialParams={{ route }}  />
+              <Stack.Screen 
+                name="BottomTabsRoot" 
+                component={BottomTabsRoot} 
+                initialParams={route.params} // Pass route.params as initialParams
+/>
               <Stack.Screen name="ProfilePage" component={Profile} />
-              <Stack.Screen name="HomePublicPage" component={HomePublicPage} />
-              <Stack.Screen name="HomePrivatePage" component={HomePrivatePage} />
-              <Stack.Screen name="SearchPage" component={SearchPage} />
+              <Stack.Screen name={SCREEN_NAMES.HOME_PUBLIC} component={HomePublicPage} />
+              <Stack.Screen name={SCREEN_NAMES.HOME_PRIVATE} component={HomePrivatePage} />
+              <Stack.Screen name={SCREEN_NAMES.SEARCH} component={SearchPage} />
             </>
           ) : (
             <>
-              <Stack.Screen name="BottomTabsRoot" component={BottomTabsRoot}  />
+              <Stack.Screen name="BottomTabsRoot" component={BottomTabsRoot} />
               <Stack.Screen 
                 name="FrontPage"
                 component={FrontPage}
@@ -250,6 +288,16 @@ const App = () => {
                 component={MapPage}
                 options={{ headerShown: false }}
               />
+              <Stack.Screen
+                name="ForgotPassPage"
+                component={ForgotPassPage}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="ChangeProfile"
+                component={ChangeProfile}
+                options={{ headerShown: false }}
+              />
             </>
           )}
         </Stack.Navigator>
@@ -259,7 +307,6 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: "row",
@@ -277,5 +324,6 @@ const styles = StyleSheet.create({
     height: 30,
   },
 });
+
 
 export default App;

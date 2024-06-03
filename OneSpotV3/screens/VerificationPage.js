@@ -1,25 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Color} from "../GlobalStyles";
+import { Color } from "../GlobalStyles";
 
 const VerificationPage = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const navigation = useNavigation();
-
   const route = useRoute();
+  const { email } = route.params || {};
   const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate} = route.params || {};
 
+  const handleConfirmPayment = async () => {
+    try {
+      const response = await fetch('http://192.168.1.6/onespot_api/verify.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          verificationCode: verificationCode,
+        }),
+      });
 
-  const handleConfirmPayment = () => {
-    alert('Payment confirmed');
-    navigation.navigate('ReceiptPage', {name, address, duration , totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate});
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          alert('Payment confirmed');
+          navigation.navigate('ReceiptPage', {name, address, duration , totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate});
+        } else {
+          Alert.alert('Error', data.message);
+        }
+      } else {
+        console.error('Server returned an error:', response.statusText);
+        Alert.alert('Error', 'An error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'An error occurred. Please try again.');
+    }
   };
-
-  useEffect(() => {
-    console.log('slots params:', route.params);
-  }, []);
-
 
   return (
     <View style={styles.container}>

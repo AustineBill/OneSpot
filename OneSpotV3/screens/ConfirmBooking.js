@@ -8,7 +8,7 @@ import { Picker } from '@react-native-picker/picker';
 const ConfirmBooking = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, price, selectedModel , address} = route.params || {};
+  const { name, price, selectedBrand , address, hour, adds} = route.params || {};
   const { selectedFloor, selectedBlock, selectedSlot , selectedDate} = route.params;
   
   const [Time, setTime] = useState("");
@@ -16,15 +16,27 @@ const ConfirmBooking = () => {
   const [Duration, setDuration] = useState('0');
   const [selectedMeridiem, setSelectedMeridiem] = useState('AM');
 
+  const basePrice = price; 
+  const baseHours = hour; 
+  const additionalHourlyRate = adds; 
+
   const calculatePrice = () => {
-    const durationInHours = parseInt(Duration);
-    const totalPrice = price * durationInHours;
-    return totalPrice;
+    if (price === "FREE") {
+      return 0;
+    } else {
+      const durationInHours = parseInt(Duration);
+      if (durationInHours <= baseHours) {
+        return basePrice;
+      } else {
+        const additionalHours = durationInHours - baseHours;
+        const additionalCost = additionalHours * additionalHourlyRate;
+  
+        return basePrice + additionalCost;
+      }
+    }
   };
 
-  // Update total price whenever duration changes
   useEffect(() => {
-    
     const totalPrice = calculatePrice();
     setTotal(totalPrice.toString());
   }, [Duration]);
@@ -66,7 +78,7 @@ const ConfirmBooking = () => {
           <Text style={styles.bookingDetails}>Booking Details</Text>
 
         
-            <Text style={styles.CarModel}>{selectedModel}</Text>
+            <Text style={styles.CarModel}>{selectedBrand}</Text>
         
           <View style={[styles.frame2, styles.frame2Position]}>
             <View style={[styles.timeContainer, styles.setTime]}>
@@ -75,13 +87,14 @@ const ConfirmBooking = () => {
                 selectedValue={Time}
                 onValueChange={(itemValue) => setTime(itemValue)}
                 style={styles.Hourpicker}>
+                 
                 <Picker.Item label="Time" value="" />
                 {[...Array(24)].map((_, i) => (
                   <Picker.Item label={String(i + 1)} value={String(i + 1)} key={i} />
                 ))}
               </Picker>
 
-
+           
               <Picker
                 selectedValue={selectedMeridiem}
                 onValueChange={(itemValue) => setSelectedMeridiem(itemValue)}

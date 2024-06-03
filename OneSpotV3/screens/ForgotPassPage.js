@@ -4,13 +4,35 @@ import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { FontFamily, FontSize, Color } from "../GlobalStyles";
 
-const ResetPassPage = () => {
+const ForgotPassPage = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  
+  const handleNext = () => {
+    fetch('http://192.168.1.6/onespot_api/update.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, newPassword }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Password updated successfully
+      navigation.navigate("LoginPage");
+    } else {
+      // Password update failed
+      alert("Password update failed. Please try again later.");
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert("An error occurred, please try again later");
+  });
+};  
 
 const handleBack = () => {
   navigation.navigate("Profile");
@@ -190,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResetPassPage;
+export default ForgotPassPage;

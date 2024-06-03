@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, View, Alert } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontSize, FontFamily } from "../GlobalStyles";
 
@@ -17,35 +16,17 @@ const Signin1 = () => {
   });
 
   const handleSubmit = () => {
-    console.log("Form data being sent:", formData);
-    fetch("http:/192.168.1.21/UserInfo.js", {  //http:/192.168.1.21/UserInfo.js
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Server response:", data);
+    const { firstName, lastName, age, phoneNumber } = formData;
 
-        if (data.status === "success") {
-          Alert.alert("Success", data.message);
-          navigation.navigate("SignIn2");
-        } else {
-          Alert.alert("Error", data.message);
-        }
-      })
-      .catch((error) => {
-        Alert.alert("Error", "Error saving form data");
-        console.error("Error saving form data:", error.message);
-      });
+    if (!firstName || !lastName || !age || !phoneNumber) {
+        Alert.alert("All fields are required");
+        return;
+    }
+
+    navigation.navigate('SignIn', formData);
   };
+
+
 
   const handleChange = (name, value) => {
     setFormData({
@@ -74,6 +55,8 @@ const Signin1 = () => {
               style={[styles.inputNumberChild, styles.Position]}
               placeholder="Enter Phone Number"
               mode="contained"
+              keyboardType="numeric"
+              maxLength={11}
               onChangeText={(text) => handleChange("phoneNumber", text)}
               theme={{ colors: { background: "rgba(168, 156, 255, 0.08)" } }}
             />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View, TextInput, ImageBackground } from "react-native";
+import { StyleSheet, Pressable, Text, View, TextInput, ImageBackground, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
 import { Picker } from '@react-native-picker/picker';
@@ -9,13 +9,58 @@ import { useRoute } from "@react-navigation/native";
 const ParkinginfoPage = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, price, address } = route.params || {};
+  const { name, price, address, hour, adds } = route.params || {};
   
-
   const [carModel, setCarModel] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
   const [selectedVehicleType, setSelectedVehicleType] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState("");
+
+  const carBrands = [
+    { label: "Toyota", value: "toyota" },
+    { label: "Mitsubishi", value: "mitsubishi" },
+    { label: "Honda", value: "honda" },
+    { label: "Nissan", value: "nissan" },
+    { label: "Suzuki", value: "suzuki" },
+    { label: "Ford", value: "ford" },
+    { label: "Hyundai", value: "hyundai" },
+    { label: "Kia", value: "kia" },
+    { label: "Mazda", value: "mazda" },
+    { label: "Chevrolet", value: "chevrolet" },
+    { label: "Isuzu", value: "isuzu" },
+    { label: "Volkswagen", value: "volkswagen" },
+    { label: "Subaru", value: "subaru" },
+    { label: "MG", value: "mg" },
+    { label: "Chery", value: "chery" }
+  ];
+
+  const motorBrands = [
+    { label: "Honda", value: "honda" },
+    { label: "Yamaha", value: "yamaha" },
+    { label: "Suzuki", value: "suzuki" },
+    { label: "Kawasaki", value: "kawasaki" },
+    { label: "Rusi", value: "rusi" },
+    { label: "KTM", value: "ktm" },
+    { label: "Royal Enfield", value: "royal_enfield" },
+    { label: "TVS", value: "tvs" },
+    { label: "BMW", value: "bmw" },
+    { label: "Aprilia", value: "aprilia" },
+    { label: "Ducati", value: "ducati" },
+    { label: "Harley-Davidson", value: "harley_davidson" },
+    { label: "SYM", value: "sym" },
+    { label: "Benelli", value: "benelli" },
+    { label: "CFMoto", value: "cfmoto" }
+  ];
+
+
+  const handleConfirm = () => {
+    if (!selectedVehicleType || !selectedColor || !selectedBrand || !plateNumber) {
+      Alert.alert('Error', 'Please fill in all fields.');
+    } else {
+      navigation.navigate("CarBookSlot", { selectedBrand, name, price, address, hour, adds});
+    }
+  };
 
   return (
     <View style={styles.parkinginfoPage}>
@@ -39,9 +84,8 @@ const ParkinginfoPage = () => {
           contentFit="cover"
           source={require("../assets/rectangle-63.png")}
         />
-        <Text style={styles.ParkVehicle}>Park your Vehicle</Text>
-        <Text style={styles.vehicleTypo}>Vehicle Information</Text>
-
+        <Text style={styles.ParkVehicle}>Vehicle Information</Text>
+        
         <View style={styles.formContainer}>
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Vehicle Type</Text>
@@ -49,7 +93,7 @@ const ParkinginfoPage = () => {
               selectedValue={selectedVehicleType}
               onValueChange={(itemValue) => setSelectedVehicleType(itemValue)}
               style={styles.picker}
-              mode="dropdown">
+             >
               <Picker.Item label="Select a vehicle type" value="" />
               <Picker.Item label="Car" value="car" />
               <Picker.Item label="Motor" value="motor" />
@@ -70,16 +114,27 @@ const ParkinginfoPage = () => {
               <Picker.Item label="Black" value="black" />
               <Picker.Item label="Silver" value="silver" />
             </Picker>
-          </View>
+          </View> 
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Model Name</Text>
-            <TextInput
-              style={styles.textInput}
-              value={carModel}
-              onChangeText={setCarModel}
-            />
+            <Text style={styles.label}>Select Brand</Text>
+            <Picker
+              selectedValue={selectedBrand}
+              onValueChange={(itemValue) => setSelectedBrand(itemValue)}
+              style={styles.picker}>
+              <Picker.Item label="Select a brand" value="" />
+              {selectedVehicleType === 'car' ? (
+                carBrands.map(brand => (
+                  <Picker.Item key={brand.value} label={brand.label} value={brand.value} />
+                ))
+              ) : (
+                motorBrands.map(brand => (
+                  <Picker.Item key={brand.value} label={brand.label} value={brand.value} />
+                ))
+              )}
+            </Picker>
           </View>
+
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Plate Number</Text>
@@ -92,11 +147,8 @@ const ParkinginfoPage = () => {
         </View>
       </View>
 
-      
-
       <Pressable
-        style={styles.submitButton}
-        onPress={() => navigation.navigate("CarBookSlot", {selectedModel: carModel, name, price , address})}>
+        style={styles.submitButton} onPress={handleConfirm}>
         <Text style={styles.done}>Confirm</Text>
       </Pressable>
     </View>
@@ -131,6 +183,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     textAlign: "center",
+    marginLeft: 10,
+    
   },
   vectorGroup: {
     top: 0,
@@ -149,13 +203,11 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_69xl_7,
  
   },
-  vehicleTypo: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "white",
-    textAlign: "center",
-    marginTop: 260,
-    marginLeft: 30,
+  
+  formContainer: {
+  
+    marginTop: 280,
+    marginLeft: 20,
   },
   ParkVehicle: {
     fontSize: 32,
@@ -165,11 +217,13 @@ const styles = StyleSheet.create({
     marginTop: 70,
     position: "absolute",
     marginLeft: 30,
+    fontSize: 24,
+
   },
 
   fieldContainer: {
     marginBottom: 20,
-    marginLeft: 35,
+    marginLeft: 30,
   },
   label: {
     fontSize: 18,
@@ -181,6 +235,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(168, 156, 255, 0.08)",
     height: 50, 
     borderWidth: 5,
+    color: Color.colorWhite,
   },
   textInput: {
     height: 50,
@@ -188,6 +243,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderWidth: 3,
     paddingHorizontal: 10,
+    
   },
   submitButton: {
     marginTop: 640,

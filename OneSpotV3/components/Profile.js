@@ -1,59 +1,18 @@
     import * as React from "react";
-    import {StyleSheet, Text, Pressable, View, Image, Platform } from "react-native";
-    import * as ImagePicker from 'expo-image-picker'; 
-    import { useState, useEffect } from 'react';
+    import {StyleSheet, Text, Pressable, View, Image, Platform, TouchableOpacity} from "react-native";
     import { useNavigation, useRoute } from "@react-navigation/native";
     import { FontSize, FontFamily, Color, Padding } from "../GlobalStyles";
 
-    const Profile = () => {
+    const Profile = ({ route }) => {
       const navigation = useNavigation();
-      const [showForm, setShowForm] = useState(false);
-      const [photos, setPhotos] = useState([]);
-      //const [attachedPhoto, setAttachedPhoto] = useState("");
 
-      const route = useRoute();
-      const { username, name, address, selectedDate} = route.params || {};
+      const { username } = route.params;
+      const { name, address, selectedDate} = route.params || {};
 
-      useEffect(() => {
-        (async () => {
-          if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-              alert('Permission to access camera roll is required!');
-            }
-          }
-        })();
-      }, []);
-
-      const handleBack = () => {
-        navigation.navigate("BottomTabsRoot", { screen: "Profile" });
-      };
-
-      const toggleForm = () => {
-        setShowForm(!showForm);
-      };
-
-      const handleAttachPhoto = async () => {
-        try {
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-          });
-          
-          if (!result.cancelled) {
-            setPhotos([...photos, result.uri]);
-          }
-        } catch (error) {
-          console.log('Error picking image: ', error);
-        }
-      };
     
-      
-      const handleRemovePhoto = (index) => {
-        const updatedPhotos = photos.filter((_, i) => i !== index);
-        setPhotos(updatedPhotos);
+      const handleBack = () => {
+        //navigation.navigate("BottomTabsRoot", { screen: "Profile" , params: { username }});
+        navigation.navigate("Profile", { username });
       };
 
 
@@ -82,13 +41,16 @@
 
             <View style={[styles.frame2, styles.frameContainerFlexBox]}>
               <Text style={styles.profile1}>Profile</Text>
-              <Pressable onPress={toggleForm}>
+              
+              
+              <TouchableOpacity onPress={() => navigation.navigate("ChangeProfile")}>
                 <Image
                   style={styles.pfpSettings1}
                   contentFit="cover"
                   source={require("../assets/pfp--settings-1.png")}
                 />
-              </Pressable>
+              </TouchableOpacity>
+           
             </View>
 
 
@@ -102,25 +64,7 @@
                 <Text style={styles.name}>{username}</Text>
               </View>
             
-              {showForm && (
-                <View style={styles.formContainer}>
-                  <Pressable onPress={handleAttachPhoto}>
-                    <Text style={styles.attachButton}>Attach Photo</Text>
-                  </Pressable>
-                  {photos.map((photo, index) => (
-                    <View key={index} style={styles.attachedPhotoContainer}>
-                      <Image
-                        source={{ uri: photo }}
-                        style={styles.attachedPhoto}
-                      />
-                      <Pressable onPress={() => handleRemovePhoto(index)}>
-                        <Text style={styles.removePhotoButton}>Remove</Text>
-                      </Pressable>
-                    </View>
-                  ))}
-                </View>
-              )}
-
+              
             <View style={[styles.frame4, styles.frameLayout1]}>
               <Pressable
                 style={styles.editProfile}
@@ -170,6 +114,7 @@
                 source={require("../assets/arrowback3.png")}
               />
             </View>
+
 
             <Pressable
               style={styles.default}
