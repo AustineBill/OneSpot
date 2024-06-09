@@ -8,8 +8,8 @@ const VerificationPage = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { email } = route.params || {};
-  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate} = route.params || {};
-
+  const { username, name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate} = route.params || {};
+  
   const handleConfirmPayment = async () => {
     try {
       const response = await fetch('http://192.168.1.6/onespot_api/verify.php', {
@@ -27,7 +27,7 @@ const VerificationPage = () => {
         const data = await response.json();
         if (data.success) {
           alert('Payment confirmed');
-          navigation.navigate('ReceiptPage', {name, address, duration , totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate});
+          navigation.navigate('ReceiptPage', { username, name, address, duration , totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate});
         } else {
           Alert.alert('Error', data.message);
         }

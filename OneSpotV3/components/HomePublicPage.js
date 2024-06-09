@@ -30,6 +30,7 @@ const HomePublicPage = (style) => {
   };
   const handleImagePress = (image) => {
     navigation.navigate("BookPage", { 
+      username,
       selectedImage: image.source, 
       name: image.name, 
       address: image.address,

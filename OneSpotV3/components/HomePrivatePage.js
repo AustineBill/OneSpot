@@ -33,6 +33,7 @@ const HomePublicPage = ({ style }) => {
 
   const handleImagePress = (image) => {
     navigation.navigate("BookPage", { 
+      username,
       selectedImage: image.source, 
       name: image.name, 
       address: image.address,
@@ -59,8 +60,6 @@ const HomePublicPage = ({ style }) => {
       slideAnim.setValue(0);
     }, [])
   );
-
-
 
   return (
     <View style={[styles.homepublicPage, style]}>

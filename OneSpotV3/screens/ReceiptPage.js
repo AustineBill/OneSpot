@@ -1,30 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Pressable } from "react-native";
+import React from 'react';
+import { Text, StyleSheet, View, Pressable, Alert } from "react-native";
 import { Image } from "expo-image";
-import { useNavigation, useRoute} from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from 'axios';
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
-import axios from 'axios'; 
-
 
 const ReceiptPage = ({ route }) => {
   const navigation = useNavigation();
-  
-  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate, userId} = route.params || {};
-  
-  useEffect(() => {
-    // Fetch username from backend
-    axios.get('http://192.168.1.6/onespot_api/Receipt.php') 
-      .then(response => {
-        setUsername(response.data.username);
-      })
-      .catch(error => {
-        console.error('Error fetching username:', error);
-      });
-  }, []);
- 
-
-
-  
+  const { username, name, address, selectedFloor, selectedBlock, selectedSlot, duration, totalPrice, time, selectedDate } = route.params || {};
 
   const calculateDepartureTime = (arrivalTime, duration) => {
     const [time, meridiem] = arrivalTime.split(' ');
@@ -56,6 +39,39 @@ const ReceiptPage = ({ route }) => {
 
   const departureTime = calculateDepartureTime(time, duration);
 
+  const saveReceipt = async () => {
+    try {
+      const receiptData = {
+        accountName: username,
+        totalCost: totalPrice,
+        location: address,
+        date: selectedDate,
+        arrivalTime: time,
+        departureTime: departureTime,
+        totalDuration: duration,
+        floor: selectedFloor,
+        block: selectedBlock,
+        slotId: selectedSlot.id,
+      };
+
+      console.log("Data to be sent:", receiptData);
+
+      const response = await axios.post('http://192.168.1.6/onespot_api/receipt.php', receiptData);
+
+      console.log("Response from server:", response.data);
+
+      if (response.data.message === "New record created successfully") {
+        Alert.alert("Success", "Receipt saved successfully");
+        navigation.navigate("HistoryPage", { username, selectedDate, name, address });
+      } else {
+        Alert.alert("Error", "Failed to save the receipt: " + response.data.error);
+      }
+    } catch (error) {
+      console.error("Error saving receipt:", error);
+      Alert.alert("Error", "An error occurred while saving the receipt");
+    }
+  };
+
  
   return (
     <View style={[styles.receiptPage, styles.pageBg]}>
@@ -65,7 +81,7 @@ const ReceiptPage = ({ route }) => {
       
       <View style={[styles.inputDate, styles.inputLayout]}>
         <Text style={[styles.accountName, styles.timeFlexBox]}>
-          Account Name: {setUsername}
+          Account Name: {username}
         </Text>
       </View>
 
@@ -86,7 +102,7 @@ const ReceiptPage = ({ route }) => {
         </View>
       </View>
 
-        <Pressable style={styles.button} onPress={() => navigation.navigate("HistoryPage", {selectedDate, name, address })}>
+        <Pressable style={styles.button} onPress={saveReceipt}>
           <Image
             style={styles.tabsPageChild}
             contentFit="cover"
@@ -146,9 +162,9 @@ const styles = StyleSheet.create({
     top: 500,
     fontFamily: FontFamily.poppinsSemiBold,
     fontWeight: "600",
-    fontSize: FontSize.size_base,
-    color: Color.colorBlack,
     position: "absolute",
+    fontSize: FontSize.size_3xl,
+    color: Color.colorBlack,
   },
  
 

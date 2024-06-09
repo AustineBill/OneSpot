@@ -12,14 +12,15 @@ const TransactionPage = () => {
   const navigation = useNavigation();
 
   const route = useRoute();
-  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate, selectedPaymentMethod } = route.params || {};
+  const { username, name, address, selectedFloor, selectedBlock, selectedSlot, duration , totalPrice, time, selectedDate, selectedPaymentMethod } = route.params || {};
 
   const handleConfirm = async () => { 
     if (!cardNumber || !nameOnCard || !expiration || !cvv || !email) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
-    
+  
+
     try {
       const response = await fetch('http://192.168.1.6/onespot_api/transaction.php', {
         method: 'POST',
@@ -31,7 +32,7 @@ const TransactionPage = () => {
           nameOnCard,
           expiration,
           cvv,
-          email, // Include the email in the request body
+          email, 
         }),
       });
   
@@ -41,7 +42,7 @@ const TransactionPage = () => {
       const data = JSON.parse(text); 
   
       if (data.success) {
-        navigation.navigate('VerificationPage', { name, address, duration , totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate });
+        navigation.navigate('VerificationPage', { username, name, address, duration , totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate });
       } else {
         Alert.alert('Error', data.message);
       }

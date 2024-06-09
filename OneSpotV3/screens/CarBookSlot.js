@@ -9,12 +9,11 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const ParkingScreen = ({ navigation }) => {
   const route = useRoute();
-  const { selectedBrand, name, price, address, hour, adds } = route.params || {};
+  const { username, selectedBrand, name, price, address, hour, adds } = route.params || {};
   const [error, setError] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   
-
   const [selectedFloor, setSelectedFloor] = useState('');
   const [selectedBlock, setSelectedBlock] = useState('');
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -124,7 +123,7 @@ const ParkingScreen = ({ navigation }) => {
       selectedFloor,
       selectedBlock,
       selectedBrand,
-      name, price, address, hour, adds, 
+      username, name, price, address, hour, adds, 
       selectedSlot,
       selectedDate: selectedDate ? formatDate(selectedDate) : 'N/A',
     });
@@ -239,10 +238,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
     position: "absolute",
-    marginLeft: 20,
+    left:20,
   },
   ParkingCar: {
     fontSize: 32,

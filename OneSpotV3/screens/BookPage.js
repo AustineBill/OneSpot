@@ -8,7 +8,8 @@ import { Color, FontFamily, FontSize } from "../GlobalStyles";
 const BookPage = () => {
   const navigation = useNavigation(); 
   const route = useRoute();
-  const { selectedImage, name, address, description, price, hour, rating, adds } = route.params || {};
+  const { username, selectedImage, name, address, description, price, hour, rating, adds } = route.params || {};
+
 
   return (
     <View style={[styles.bookPage, styles.frameFlexBox1]}>
@@ -63,7 +64,7 @@ const BookPage = () => {
             </Text>
           </View>
           
-          <Pressable style={styles.frameChild} onPress={() => navigation.navigate("ParkinginfoPage", { name, price, address, hour, adds})} >
+          <Pressable style={styles.frameChild} onPress={() => navigation.navigate("ParkinginfoPage", { username, name, price, address, hour, adds})} >
             <Text style={[styles.bookNow, styles.priceTypo]}>BOOK NOW</Text>
           </Pressable>
           

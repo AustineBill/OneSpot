@@ -1,23 +1,57 @@
-import * as React from "react";
-
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Pressable, ImageBackground, Image } from "react-native";
 import { useNavigation, useRoute  } from "@react-navigation/native";
-import { Color, FontSize, Border, FontFamily } from "../GlobalStyles";
+import { Color, FontSize,  FontFamily } from "../GlobalStyles";
+import axios from "axios";
+
+
 
 const HistoryPage = () => {
   const navigation = useNavigation();
-
   const route = useRoute();
-  const { name, address, selectedDate} = route.params || {};
+  const { username, name, address, selectedDate} = route.params || {};
+  const [bookingHistory, setBookingHistory] = useState([])
 
-const handleBack = () => {
-  navigation.navigate("Profile");
-};
+  const handleSaveBooking = async () => {
+    try {
+      const response = await axios.post("http://192.168.1.6/onespot_api/history.php", {
+        username: username,
+        name: name,
+        address: address,
+        selectedDate: selectedDate,
+      });
+  
+      console.log(response.data);
+      setBookingHistory(prevHistory => [...prevHistory, response.data]);
+  
+      navigation.navigate("Profile");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookingHistory();                                                                                                                                                                                                                                                                                       
+    }, []);
+
+  const fetchBookingHistory = async () => {
+    try {
+      const response = await axios.get("http://192.168.1.6/onespot_api/viewallbookings.php", {
+        params: {
+          username: username,
+        },
+      });
+      console.log('API response:', response.data);  // Log the response
+      setBookingHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching booking history: ", error);
+    }
+  };
 
   return (
     <View style={styles.historyPage}>
 
-      <Pressable style={styles.arrowIcon} onPress = {handleBack}>
+      <Pressable style={styles.arrowIcon} onPress={handleSaveBooking} >
         <Image
           contentFit="cover"
           source={require("../assets/back-actiongoback.png")}/>
@@ -25,33 +59,32 @@ const handleBack = () => {
 
       <View style= {styles.historylayout}> 
         <Text style={styles.bookingHistory}>Booking History</Text>
-      
-      <View style= {styles.historybox}> 
-      
-        <Image
-          style={[styles.timee4Icon, styles.iconLayout]}
-          contentFit="cover"
-          source={require("../assets/timee-2.png")}
-        />
-
-        <Text style={styles.infoLayout}> {selectedDate} </Text>
-        <Image
-          style={[styles.image17Icon, styles.iconLayout]}
-          contentFit="cover"
-          source={require("../assets/image-15.png")}
-        />
-        <Text style={styles.infoLayout}> {name} </Text>
-        <Image
-          style={[styles.timee6Icon, styles.iconLayout]}
-          contentFit="cover"
-          source={require("../assets/timee-3.png")}
-        />
-        <Text style={styles.infoLayout}> {address} </Text>
-      </View>
-
-      
-      
-
+        {bookingHistory.length > 0 ? (
+          bookingHistory.map((transaction, index) => (
+            <View key={index} style={styles.historybox}>
+              <Image
+                style={[styles.icon1, styles.iconLayout]}
+                contentFit="cover"
+                source={require("../assets/timee-2.png")}
+              />
+              <Text style={styles.infoLayout}>{transaction.selectedDate}</Text>
+              <Image
+                style={[styles.icon2, styles.iconLayout]}
+                contentFit="cover"
+                source={require("../assets/image-15.png")}
+              />
+              <Text style={styles.infoLayout}>{transaction.name}</Text>
+              <Image
+                style={[styles.icon3, styles.iconLayout]}
+                contentFit="cover"
+                source={require("../assets/timee-3.png")}
+              />
+              <Text style={styles.infoLayout}>{transaction.address}</Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noHistoryText}>No booking history available.</Text>
+        )}
       </View>
 
         <ImageBackground
@@ -61,7 +94,7 @@ const handleBack = () => {
 
         <Pressable
           style={styles.bookToday}
-          onPress={() => navigation.navigate("BottomTabsRoot", { screen: "" })}>
+          onPress={handleSaveBooking}>
           <Text style={styles.bookToday1}>
             BOOK TODAY
           </Text>
@@ -88,6 +121,19 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
    
+  },
+ 
+  icon1: {
+    top: 5,
+    left:5,
+  },
+  icon2: {
+    top: 30,
+    left: 5,
+  },
+  icon3: {
+    top: 55,
+    left: 5,
   },
   iconLayout: {
     height: 20,
@@ -122,6 +168,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 20,
   },
+  noHistoryText: {
+    textAlign: "center",
+    marginTop: 250,
+    color: Color.colorWhite,
+    fontSize: FontSize.size_lg,
+    fontFamily: FontFamily.nunitoSans12ptRegular,
+  },
 
   historybox: {
     width: 310,
@@ -129,7 +182,8 @@ const styles = StyleSheet.create({
     height: 75,
     overflow: "hidden",
     marginLeft: 20,
-    marginTop: 50,
+    marginTop: 20,
+    top: 30,
     
   },
   confirm: {

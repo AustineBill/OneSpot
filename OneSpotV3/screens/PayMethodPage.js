@@ -6,11 +6,12 @@ import { Color } from "../GlobalStyles";
 const PaymentMethodPage = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, address, selectedFloor, selectedBlock, selectedSlot, duration, totalPrice, time, selectedDate } = route.params || {};
+  const { username, name, address, selectedFloor, selectedBlock, selectedSlot, duration, totalPrice, time, selectedDate } = route.params || {};
 
   const handlePaymentMethodSelect = (method) => {
-    navigation.navigate('TransactionPage', { selectedPaymentMethod: method, name, address, duration, totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate });
+    navigation.navigate('TransactionPage', { selectedPaymentMethod: method, username, name, address, duration, totalPrice, selectedFloor, selectedBlock, selectedSlot, time, selectedDate });
   };
+
 
   return (
     <View style={styles.container}>

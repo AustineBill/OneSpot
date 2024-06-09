@@ -8,7 +8,7 @@ import { Picker } from '@react-native-picker/picker';
 const ConfirmBooking = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, price, selectedBrand , address, hour, adds} = route.params || {};
+  const { username, name, price, selectedBrand , address, hour, adds} = route.params || {};
   const { selectedFloor, selectedBlock, selectedSlot , selectedDate} = route.params;
   
   const [Time, setTime] = useState("");
@@ -50,7 +50,7 @@ const ConfirmBooking = () => {
 
           <Pressable
             style={[styles.containerContaineraspectraInner, styles.logFlexBox]}
-            onPress={() => navigation.navigate("PayMethodPage", { name, address, selectedFloor, 
+            onPress={() => navigation.navigate("PayMethodPage", { username, name, address, selectedFloor, 
               selectedBlock, selectedSlot, duration: Duration, time: `${Time} ${selectedMeridiem}`,
               selectedDate, totalPrice: calculatePrice()
              })}

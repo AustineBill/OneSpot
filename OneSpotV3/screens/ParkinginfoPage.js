@@ -9,9 +9,7 @@ import { useRoute } from "@react-navigation/native";
 const ParkinginfoPage = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name, price, address, hour, adds } = route.params || {};
-  
-  const [carModel, setCarModel] = useState("");
+  const { username, name, price, address, hour, adds } = route.params || {};
   const [plateNumber, setPlateNumber] = useState("");
   const [selectedVehicleType, setSelectedVehicleType] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -58,7 +56,7 @@ const ParkinginfoPage = () => {
     if (!selectedVehicleType || !selectedColor || !selectedBrand || !plateNumber) {
       Alert.alert('Error', 'Please fill in all fields.');
     } else {
-      navigation.navigate("CarBookSlot", { selectedBrand, name, price, address, hour, adds});
+      navigation.navigate("CarBookSlot", { username, selectedBrand, name, price, address, hour, adds});
     }
   };
 
